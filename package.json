@@ -14,10 +14,13 @@
   ],
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
-    "better-sqlite3": "^9.4.0",
     "@discordjs/voice": "^0.19.0",
     "@snazzah/davey": "^0.1.7",
+    "better-sqlite3": "^9.6.0",
     "cheerio": "^1.0.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.6.1",
