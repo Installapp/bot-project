@@ -566,6 +566,8 @@ client.dailyStats = {
 	joins: 0,
 	leaves: 0
 };
+// Throttle for console log of online member updates (once per hour)
+client.lastOnlineCountConsoleLog = 0;
 
 // --- Anti-Spam Manager ---
 class AntiSpamManager {
@@ -847,7 +849,12 @@ async function updateOnlineMemberCountChannel() {
             const desiredName = `『👤』𝐎𝐧𝐥𝐢𝐧𝐞 : ${onlineCount}`;
             if (channel.name !== desiredName) {
                 await channel.setName(desiredName);
-                console.log(`✅ Updated online member count channel name to: ${desiredName}`);
+                // Throttle console log to once per hour
+                const now = Date.now();
+                if (!client.lastOnlineCountConsoleLog || now - client.lastOnlineCountConsoleLog >= 60 * 60 * 1000) {
+                    client.lastOnlineCountConsoleLog = now;
+                    console.log(`✅ Updated online member count channel name to: ${desiredName}`);
+                }
             }
             // Only log when there's an actual change, not when already up to date
         } else {
@@ -1444,6 +1451,8 @@ client.on('channelDelete', async (channel) => {
 client.on('channelUpdate', async (oldChannel, newChannel) => {
     try {
         const guild = newChannel.guild; if (!guild) return;
+        // Skip logging for the online member count channel to avoid spam in channel logs
+        if (String(newChannel.id) === String(config.onlineMemberCountChannelId)) return;
         const changes = [];
         const nameChanged = oldChannel.name !== newChannel.name;
         if (nameChanged) {
