@@ -4,8 +4,9 @@
   "description": "A Discord bot for sending welcome messages to new members",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js",
-    "dev": "nodemon bot.js"
+    "start": "npm run build:deps && node bot.js",
+    "dev": "nodemon bot.js",
+    "build:deps": "node -e \"process.exit(0)\""
   },
   "keywords": [
     "discord",
