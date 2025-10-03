@@ -27,7 +27,7 @@ npm install
 3) فایل `.env` بسازید و توکن بات را قرار دهید:
 ```env
 DISCORD_BOT_TOKEN=YOUR_BOT_TOKEN
-PORT=3000
+PORT=Your_Port_dashbord_web
 ```
 4) اجرا:
 ```bash
@@ -130,17 +130,17 @@ npm install
 ```js
 // bot.js
 const LOG_CHANNELS = {
-  member: '1413944186058833980',
-  message: '1413949703124553848',
-  channel: '1413949745935945914',
-  nickname: '1413949204090454046',
-  role: '1413949370776158380',
-  voice: '1413949655099768932',
-  ban: '1413949272407146716',
-  timeout: '1413960573669871626',
-  invite: '1413961019658604678',
-  server: '1413949805562036284',
-  fallback: '1415657800557793311'
+  member: '',
+  message: '',
+  channel: '',
+  nickname: '',
+  role: '',
+  voice: '',
+  ban: '',
+  timeout: '',
+  invite: '',
+  server: '',
+  fallback: ''
 };
 ```
 هر کدام را با آیدی چنل دلخواه خود جایگزین کنید.
@@ -158,7 +158,7 @@ const TICKET_CONFIG = {
 ### 3) چنل لاگ اکشن‌های تیکت
 در `ticket.js` تابع `sendTicketActionLog` آیدی چنل لاگ را درون خودش دارد:
 ```js
-const LOG_CHANNEL_ID = '1415289745231056986'; // تغییر دهید
+const LOG_CHANNEL_ID = ''; // تغییر دهید
 ```
 
 ### 4) شمارنده اعضا و آنلاین‌ها
@@ -185,3 +185,4 @@ const LOG_CHANNEL_ID = '1415289745231056986'; // تغییر دهید
 ---
 
 اگر می‌خواهید استایل امبدها/متن‌ها دقیقاً مثل نمونه‌های خودتان باشد، کافی است متن عنوان‌ها و فیلدها را در رویدادهای مربوطه در `bot.js` و `ticket.js` ویرایش کنید.
+
