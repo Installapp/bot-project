@@ -84,7 +84,7 @@ async function sendLog(guild, type, payload) {
 
 function userLine(user) {
     if (!user) return 'نامشخص';
-    return `${user.tag} (${user.id})`;
+    return `${user.tag} (<@${user.id}>)`;
 }
 
 function withAuthor(author) {
@@ -1695,12 +1695,24 @@ client.on('inviteCreate', async (invite) => {
             return `in ${hours} hours`;
         }
         const ch = invite.channel;
+        // Determine creator: prefer invite.inviter, fallback to audit log
+        let creator = invite.inviter || null;
+        if (!creator) {
+            try {
+                const fetched = await invite.guild.fetchAuditLogs({ type: AuditLogEvent.InviteCreate, limit: 1 });
+                const entry = fetched?.entries?.first?.();
+                if (entry && Date.now() - entry.createdTimestamp < 10_000) {
+                    creator = entry.executor || creator;
+                }
+            } catch (_) {}
+        }
         const embed = new EmbedBuilder()
             .setColor(0x2ecc71)
             .setTitle('Invite created')
             .addFields(
                 { name: 'Code', value: invite.code, inline: false },
                 { name: 'Channel', value: ch ? `${ch.name} (# ${ch.name})` : '—', inline: false },
+                { name: 'By', value: creator ? userLine(creator) : '—', inline: false },
                 { name: 'Expires', value: relExpires(invite.expiresAt), inline: false },
                 { name: 'Max uses', value: String(invite.maxUses ?? '∞'), inline: false }
             )
@@ -1712,12 +1724,22 @@ client.on('inviteCreate', async (invite) => {
 client.on('inviteDelete', async (invite) => {
     try {
         const ch = invite.channel;
+        // Determine deleter via audit log (best effort)
+        let deleter = null;
+        try {
+            const fetched = await invite.guild.fetchAuditLogs({ type: AuditLogEvent.InviteDelete, limit: 1 });
+            const entry = fetched?.entries?.first?.();
+            if (entry && Date.now() - entry.createdTimestamp < 10_000) {
+                deleter = entry.executor || null;
+            }
+        } catch (_) {}
         const embed = new EmbedBuilder()
             .setColor(0xe74c3c)
             .setTitle('Invite deleted')
             .addFields(
                 { name: 'Code', value: invite.code, inline: false },
-                { name: 'Channel', value: ch ? `${ch.name} (# ${ch.name})` : '—', inline: false }
+                { name: 'Channel', value: ch ? `${ch.name} (# ${ch.name})` : '—', inline: false },
+                { name: 'By', value: deleter ? userLine(deleter) : '—', inline: false }
             )
             .setTimestamp();
         await sendLog(invite.guild, 'invite', { embeds: [embed] });
